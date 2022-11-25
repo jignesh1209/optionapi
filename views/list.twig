@@ -1,0 +1,78 @@
+<html>
+    <head>
+        <title>Option Chain data</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            .row {
+                margin-left:-5px;
+                margin-right:-5px;
+            }
+                
+            .column {
+                float: left;
+                width: 50%;
+                padding: 5px;
+            }
+
+              /* Clearfix (clear floats) */
+            .row::after {
+                content: "";
+                clear: both;
+                display: table;
+            }
+
+            table {
+                border-collapse: collapse;
+                border-spacing: 0;
+                width: 100%;
+                border: 1px solid #ddd;
+            }
+
+            th, td {
+                text-align: left;
+                padding: 16px;
+            }
+
+            tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+        </style>
+    </head>
+
+    <body>
+        <p>expireDate: {{ expireDate }}</p>
+        <p>BANKNIFTY: {{ bankNifty }}</p>
+        <div class="row">
+            <div class="column">
+                <table border="1">
+                    {% for items in optionMin %}
+                        <th>{{ items.strikePrice }}</th>
+                    {% endfor %}
+                    <tr>
+                        {% for item in optionMin %}
+                            <td>{{ item.CEChangeInOpenInterest }}</td>
+                        {% endfor %}
+                    </tr>
+                </table>
+            </div>
+            <br/>
+            <div class="column">
+                <table border="1">
+
+                    {% for items in optionMax %}
+                        <th>{{ items.strikePrice }}</th>
+                    {% endfor %}
+                    <tr>
+                        {% for item in optionMax %}
+                            <td>{{ item.PEChangeInOpenInterest }}</td>
+                        {% endfor %}
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
