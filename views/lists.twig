@@ -17,20 +17,23 @@
                     </div>
                 </div>
             </div>
-            <br/>
             <div class="row">
                 <div class="col-md-6">
-                    <span>Call Data</span>
                     <table class="table table-bordered table-responsive table-sm" id="tblCallData">
                         <thead>
+                            <tr>
+                                <th colspan="10" style="text-align:center">Calls Data Changing OI </th>
+                            </tr
                         </thead>
                         <tbody></tbody>
                     </table>
                 </div>
                 <div class="col-md-6">
-                    <caption>Put Data</caption>
                     <table class="table table-bordered table-responsive table-sm" id="tblPutData">
                         <thead>
+                            <tr>
+                                <th colspan="10" style="text-align:center">Puts Data Changing OI </th>
+                            </tr
                         </thead>
                         <tbody></tbody>
                     </table>
@@ -46,39 +49,43 @@
                 contentType:"application/json",
                 success: function(response){
                     let optionData = response;
-                    console.log(optionData);
+                    //console.log(optionData);
                     $("#spBankNif").html(optionData.bankNifty);
                     $("#spExpDate").html(optionData.expireDate);
                     
                     let rowCallArray = getRows(optionData.optionMin,'min',$("#tblCallData > tbody tr").length);
                     let rowPutArray = getRows(optionData.optionMax,'max',$("#tblPutData > tbody tr").length);
 
-                    if($("#tblCallData thead > tr").length == 0) {
-                        $("#tblCallData > thead ").append(rowCallArray[0]);
+                    if($("#tblCallData tbody > tr").length == 0) {
+                        $("#tblCallData > tbody ").append(rowCallArray[0]);
                         $("#tblCallData > tbody ").append(rowCallArray[1]);
                     } else {
-                        $("#tblCallData > thead").find('tr').remove();
-                        $("#tblCallData > thead ").append(rowCallArray[0]);
+                        //$("#tblCallData > thead").find('tr').remove();
                         $("#tblCallData > tbody ").prepend(rowCallArray[1]);
+                        $("#tblCallData > tbody ").prepend(rowCallArray[0]);
                     }
 
-                    if($("#tblPutData thead > tr").length == 0) {
-                        $("#tblPutData > thead ").append(rowPutArray[0]);
+                    if($("#tblPutData tbody > tr").length == 0) {
+                        $("#tblPutData > tbody ").append(rowPutArray[0]);
                         $("#tblPutData > tbody ").append(rowPutArray[1]);
                     } else {
-                        $("#tblPutData > thead").find('tr').remove();
-                        $("#tblPutData > thead ").append(rowPutArray[0]);
+                        //$("#tblPutData > thead").find('tr').remove();
                         $("#tblPutData > tbody ").prepend(rowPutArray[1]);
+                        $("#tblPutData > tbody ").prepend(rowPutArray[0]);
                         //$("#tblPutData > tbody tr").prepend('<tr><td colspan="9">Jignesh'+ $("#tblPutData > tbody tr").length +'</td></tr>');
                     }
-                    $("#tblCallData > tbody tr td").each(function (i) {
-                        if($(this).parent().find('tr').length)
-                        console.log("spCallId"+ i + ($(this).parent().parent().find('tr').length));
-                        //console.log($("#spCallId"+ i + $(this).find('tr').length-1).html());
-                    })
+                    //$("#tblCallData > tbody").each(function (i) {
+                    //    if($(this).find('tr').length >= 2) {
+                    //        //console.log($("#spCallId"+ i +''+ $(this).parent().find('tr').length).html());
+                    //        let cIdTdOld =parseInt($("#spCallId"+ i +''+ $(this).find('tr').length-1).html());
+                    //        let cIdTdNew =parseInt($("#spCallId"+ i +''+ $(this).find('tr').length).html());
+                    //        console.log("old="+cIdTdOld);
+                    //        console.log("new="+cIdTdNew);
+                    //    }
+                    //})
                 },
                 error: function(error) {
-                    
+
                 },
                 complete: function(result) {
 
@@ -87,20 +94,31 @@
         }
 
         function getRows(options,sType,tblLength) {
+            console.log(tblLength);
             let currentDate = new Date();
             let time = currentDate.getHours() + ":" + currentDate.getMinutes();
             let optionData = options;
             let mCTr = '<tr>';
             let mCRow = '<tr>';
-            for(let i=0; i< optionData.length; i++){
-                mCTr += "<th>" + optionData[i].strikePrice + "</th>";
+            for(let i=0; i<= optionData.length-1; i++){
+                mCTr += "<td>" + optionData[i].strikePrice + "</td>";
                 if(sType === "max") {
                     mCRow += '<td><span id="spPutId'+ i + tblLength +'">'+ optionData[i].PEChangeInOpenInterest + "</span></td>";    
                 } else {
                     //console.log(parseInt($("#spCallId"+ i + (tblLength -1)).html()) >= parseInt($("#spCallId"+ i + tblLength).html()));
                     //console.log($("#spCallId"+ i + (tblLength)).val());
                     //let cssColor = (parseInt($("#spCallId"+ i + (tblLength -1)).html()) >= parseInt($("#spCallId"+ i + tblLength).html()) ? "table-success" : "table-warning");
-                    mCRow += '<td ><span id="spCallId'+ i + tblLength +'" >'+ optionData[i].CEChangeInOpenInterest + "</span></td>";
+                    let cssColor = "";
+                    if(tblLength > 0) {
+                        if(parseInt($("#spCallId"+ (tblLength - 2)+i).html()) <= parseInt(optionData[i].CEChangeInOpenInterest)) {
+                            $("#spCallId"+ (tblLength - 2)+i).addClass("table-warning");
+                            cssColor = "class='table-success'";
+                        } else {
+                            $("#spCallId"+ (tblLength - 2)+i).addClass("table-success");
+                            cssColor = "class='table-warning'";
+                        }
+                    }
+                    mCRow += '<td ><span id="spCallId'+ tblLength + i +'"  '+ cssColor + '>'+ optionData[i].CEChangeInOpenInterest + "</span></td>";
                 }
             }
             mCTr += "</tr>";
